@@ -63,7 +63,9 @@ TODO: Can this be done with less privileges? Just `SYS_RESOURCE` doesn't work:
 
 ## CRIU check
 
-You can check capabilities/privileges like this:
+You can let CRIU check if all capabilities/privileges are ok using the `criu check` command.
+
+Example with only the `SYS_RESOURCE` capability:
 
     ❯ docker run -it --cap-add=SYS_RESOURCE --rm --name crac-demo crac-demo:checkpoint /opt/jdk/lib/criu check
     Warn  (criu/tun.c:85): tun: Unable to create tun: No such file or directory
@@ -76,7 +78,7 @@ You can check capabilities/privileges like this:
     Error (criu/cr-check.c:157): sys/kernel/ns_last_pid sysctl is inaccessible: Read-only file system
     Warn  (criu/cr-check.c:1432): Does not look good.
 
-Privileged works:
+Example with `--privileged`:
 
     ❯ docker run -it --privileged --rm --name crac-demo crac-demo:checkpoint /opt/jdk/lib/criu check
     Warn  (criu/kerndat.c:1466): CRIU was built without libnftables support
