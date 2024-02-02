@@ -56,7 +56,7 @@ Start a new container:
 
 TODO: Can this be done with less privileges? Just `SYS_RESOURCE` doesn't work:
 
-    ❯ docker run -it --cap-add=SYS_RESOURCE --rm --name crac-demo crac-demo:checkpoint java -XX:CRaCRestoreFrom=/crac-files
+    ❯ docker run -it --cap-add=SYS_RESOURCE --rm --name crac-demo-axle crac-demo-axle:checkpoint java -XX:CRaCRestoreFrom=/crac-files
     Error (criu/cr-restore.c:1518): Can't fork for 8: Read-only file system
     Error (criu/cr-restore.c:2605): Restoring FAILED.
     Error (criu/cr-restore.c:1835): Pid 14 do not match expected 8
@@ -67,7 +67,7 @@ You can let CRIU check if all capabilities/privileges are ok using the `criu che
 
 Example with only the `SYS_RESOURCE` capability:
 
-    ❯ docker run -it --cap-add=SYS_RESOURCE --rm --name crac-demo crac-demo:checkpoint /opt/jdk/lib/criu check
+    ❯ docker run -it --cap-add=SYS_RESOURCE --rm --name crac-demo-axle crac-demo-axle:checkpoint /opt/jdk/lib/criu check
     Warn  (criu/tun.c:85): tun: Unable to create tun: No such file or directory
     Warn  (criu/sk-unix.c:224): unix: Unable to open a socket file: Operation not permitted
     Warn  (criu/net.c:3714): Unable create a network namespace: Operation not permitted
