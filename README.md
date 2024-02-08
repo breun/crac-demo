@@ -52,14 +52,7 @@ Exit the application container.
 
 Start a new container:
 
-    docker run -it --privileged --rm --name crac-demo crac-demo:checkpoint java -XX:CRaCRestoreFrom=/crac-files
-
-TODO: Can this be done with less privileges? Just `SYS_RESOURCE` doesn't work:
-
-    ❯ docker run -it --cap-add=SYS_RESOURCE --rm --name crac-demo-axle crac-demo-axle:checkpoint java -XX:CRaCRestoreFrom=/crac-files
-    Error (criu/cr-restore.c:1518): Can't fork for 8: Read-only file system
-    Error (criu/cr-restore.c:2605): Restoring FAILED.
-    Error (criu/cr-restore.c:1835): Pid 14 do not match expected 8
+    docker run -it --cap-add=NET_ADMIN --cap-add=SYS_ADMIN --rm --name crac-demo crac-demo:checkpoint java -XX:CRaCRestoreFrom=/crac-files
 
 ## CRIU check
 
