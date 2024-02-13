@@ -20,7 +20,12 @@ Build application image:
 
 Start container for checkpoint:
 
-    docker run -it --cap-add=CHECKPOINT_RESTORE --cap-add=SYS_PTRACE --rm --name crac-checkpoint crac-demo
+    docker run -it \
+        --cap-add=CHECKPOINT_RESTORE \
+        --cap-add=SYS_PTRACE \
+        --rm \
+        --name crac-demo-checkpoint
+        crac-demo
 
 Start application:
 
@@ -30,7 +35,7 @@ Optionally interact with the application to warm it up.
 
 Open another shell:
 
-    docker exec -it crac-checkpoint sh
+    docker exec -it crac-demo-checkpoint sh
 
 Trigger a checkpoint:
 
@@ -42,7 +47,7 @@ Find the container ID of the container that ran the application:
 
     docker ps -a
 
-Commit the current state of the container:
+Commit the current state of the container as a new image:
 
     docker commit ${CONTAINER_ID} crac-demo:checkpoint
 
@@ -52,7 +57,13 @@ Exit the application container.
 
 Start a new container:
 
-    docker run -it --cap-add=NET_ADMIN --cap-add=SYS_ADMIN --rm --name crac-demo crac-demo:checkpoint java -XX:CRaCRestoreFrom=/crac-files
+    docker run -it \
+        --cap-add=NET_ADMIN \
+        --cap-add=SYS_ADMIN \
+        --rm \
+        --name crac-demo \
+        crac-demo:checkpoint \
+        java -XX:CRaCRestoreFrom=/crac-files
 
 ## CRIU check
 
@@ -60,7 +71,7 @@ You can let CRIU check if all capabilities/privileges are ok using the `criu che
 
 Example with only the `SYS_RESOURCE` capability:
 
-    ❯ docker run -it --cap-add=SYS_RESOURCE --rm --name crac-demo-axle crac-demo-axle:checkpoint /opt/jdk/lib/criu check
+    ❯ docker run -it --cap-add=SYS_RESOURCE --rm --name crac-demo crac-demo:checkpoint /opt/jdk/lib/criu check
     Warn  (criu/tun.c:85): tun: Unable to create tun: No such file or directory
     Warn  (criu/sk-unix.c:224): unix: Unable to open a socket file: Operation not permitted
     Warn  (criu/net.c:3714): Unable create a network namespace: Operation not permitted
