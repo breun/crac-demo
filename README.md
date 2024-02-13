@@ -20,16 +20,13 @@ Build application image:
 
 Start container for checkpoint:
 
-    docker run -it \
+    docker run \
         --cap-add=CHECKPOINT_RESTORE \
         --cap-add=SYS_PTRACE \
         --rm \
-        --name crac-demo-checkpoint
-        crac-demo
-
-Start application:
-
-    java -XX:CRaCCheckpointTo=/crac-files -jar /app/crac-demo.jar
+        --name crac-demo-checkpoint \
+        crac-demo \
+        java -XX:CRaCCheckpointTo=/crac-files -jar /app/crac-demo.jar
 
 Optionally interact with the application to warm it up.
 
