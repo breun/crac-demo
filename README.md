@@ -1,5 +1,7 @@
 # CRaC Demo
 
+This is a demo for using CRaC to checkpoint and restore a containerized Spring Boot application on an Apple Silicon device. 
+
 ## How this project was set up
 
 1. Create a new Spring Boot 3.2.2 WebMVC project.
