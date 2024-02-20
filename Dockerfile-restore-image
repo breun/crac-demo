@@ -1,0 +1,2 @@
+FROM crac-demo:checkpoint
+COPY crac-files /crac-files/

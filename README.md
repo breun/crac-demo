@@ -10,13 +10,17 @@
 
 Build application:
 
-    ./mvnw clean verify 
+    ./mvnw clean verify
 
 Build application image:
 
-    docker build -t crac-demo .
+    docker build --file Dockerfile-checkpoint-image --tag crac-demo:checkpoint .
 
 ## Create checkpoint
+
+Create a fresh directory for the CRaC checkpoint files:
+
+    mkdir -p crac-files
 
 Start container for checkpoint:
 
@@ -25,62 +29,37 @@ Start container for checkpoint:
         --cap-add=SYS_PTRACE \
         --rm \
         --name crac-demo-checkpoint \
-        crac-demo \
+        --publish 8080:8080 \
+        --volume $PWD/crac-files:/crac-files \
+        crac-demo:checkpoint \
         java -XX:CRaCCheckpointTo=/crac-files -jar /app/crac-demo.jar
 
-Optionally interact with the application to warm it up.
-
-Open another shell:
-
-    docker exec -it crac-demo-checkpoint sh
+Optionally interact with the application at http://localhost:8080/hello to warm it up.
 
 Trigger a checkpoint:
 
-    jcmd `pidof java` JDK.checkpoint && exit
+    docker exec crac-demo-checkpoint jcmd /app/crac-demo.jar JDK.checkpoint
 
-The application will be stopped, and you should see the checkpoint files in `/crac-files`.
+The application and its container will be stopped, and you should see the checkpoint files in `crac-files`.
 
-Find the container ID of the container that ran the application:
+Create a restore image:
 
-    docker ps -a
+    docker build --file Dockerfile-restore-image --tag crac-demo:restore .
 
-Commit the current state of the container as a new image:
+You can remove the local `crac-files` now:
 
-    docker commit ${CONTAINER_ID} crac-demo:checkpoint
-
-Exit the application container.
+    rm -rf crac-files
 
 ## Restore from checkpoint
 
-Start a new container:
+Start a new container that restores the application from the checkpoint:
 
-    docker run -it \
-        --cap-add=NET_ADMIN \
-        --cap-add=SYS_ADMIN \
+    docker run \
+        --cap-add=SYS_RESOURCE \
         --rm \
         --name crac-demo \
-        crac-demo:checkpoint \
+        --publish 8080:8080 \
+        crac-demo:restore \
         java -XX:CRaCRestoreFrom=/crac-files
 
-## CRIU check
-
-You can let CRIU check if all capabilities/privileges are ok using the `criu check` command.
-
-Example with only the `SYS_RESOURCE` capability:
-
-    ❯ docker run -it --cap-add=SYS_RESOURCE --rm --name crac-demo crac-demo:checkpoint /opt/jdk/lib/criu check
-    Warn  (criu/tun.c:85): tun: Unable to create tun: No such file or directory
-    Warn  (criu/sk-unix.c:224): unix: Unable to open a socket file: Operation not permitted
-    Warn  (criu/net.c:3714): Unable create a network namespace: Operation not permitted
-    Warn  (criu/net.c:3770): NSID isn't reported for network links
-    Warn  (criu/net.c:3430): Unable to get socket network namespace
-    Warn  (criu/kerndat.c:1466): CRIU was built without libnftables support
-    Warn  (criu/kerndat.c:1009): Fail to mount tmfps to /tmp/.criu.move_mount_set_group.Tm0iCH: Operation not permitted
-    Error (criu/cr-check.c:157): sys/kernel/ns_last_pid sysctl is inaccessible: Read-only file system
-    Warn  (criu/cr-check.c:1432): Does not look good.
-
-Example with `--privileged`:
-
-    ❯ docker run -it --privileged --rm --name crac-demo crac-demo:checkpoint /opt/jdk/lib/criu check
-    Warn  (criu/kerndat.c:1466): CRIU was built without libnftables support
-    Looks good.
+This should start up really quickly. 🚀
