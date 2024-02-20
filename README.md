@@ -64,4 +64,4 @@ Start a new container that restores the application from the checkpoint:
         crac-demo:restore \
         java -XX:CRaCRestoreFrom=/crac-files
 
-This should start up really quickly. 🚀
+This should start up really quickly and http://localhost:8080/hello should work again. 🚀
