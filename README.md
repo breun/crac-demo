@@ -4,7 +4,7 @@ This is a demo for using CRaC to checkpoint and restore a containerized Spring B
 
 ## How this project was set up
 
-1. Create a new Spring Boot 3.2.2 WebMVC project.
+1. Create a new Spring Boot 3.2.3 WebMVC project.
 2. Add `org.crac:crac` dependency.
 3. Add a simple REST controller.
 
@@ -51,6 +51,10 @@ Create a restore image:
 You can remove the local `crac-files` now:
 
     rm -rf crac-files
+
+You can also remove the image that we used to create the restore image now:
+
+    docker rmi crac-demo:checkpoint
 
 ## Restore from checkpoint
 
